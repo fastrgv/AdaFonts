@@ -50,11 +50,11 @@ To initiate, type:
 
 Compiling from a commandline terminal:
 
-.) wcmp.bat on Windows
+.) "wcmp.bat fontbtns" on Windows
 
-.) ocmpss.sh on OSX
+.) "ocmpss.sh fontbtns" on OSX
 
-.) lcmp.sh on linux
+.) "lcmp.sh fontbtns" on linux
 
 
 =======================================================================
