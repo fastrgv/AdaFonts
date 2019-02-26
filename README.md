@@ -1,3 +1,9 @@
+Here is the link to the latest 7zip file containing all source:
+
+https://github.com/fastrgv/AdaFonts/releases/download/v1.0.0/adaFontDemo.7z
+
+
+
 # AdaFonts
 
 **ver 1.0 -- 27feb19**
