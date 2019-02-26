@@ -37,7 +37,9 @@ Open a commandline terminal, and cd to the install directory.
 To initiate, type:
 
 .) binw32\fontbtns (Windows)
+
 .) fontbtns_osx (OSX)
+
 .) fontbtns_gnu (linux)
 
 =======================================================
@@ -46,7 +48,9 @@ To initiate, type:
 Compiling from a commandline terminal:
 
 .) wcmp.bat on Windows
+
 .) ocmpss.sh on OSX
+
 .) lcmp.sh on linux
 
 
