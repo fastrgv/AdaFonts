@@ -55,6 +55,7 @@ Compiling from a commandline terminal:
 
 
 =======================================================================
+
 AdaFonts is covered by the GNU GPL v3 as indicated in the sources:
 
  Copyright (C) 2019  fastrgv@gmail.com
