@@ -39,7 +39,7 @@ on any computer running Windows, OS-X, or GNU/Linux.
 The only 3rd-party tool required is an Ada compiler.
 
 ## Setup & Running:
-The application's root directory [~/adafonts/] contains files 
+The application's root directory [~/adafontsTTF/] contains files 
 for deployment on 3 platforms:  1)OS-X, 2)linux, 3)Windows, 
 in addition to all the source code.
 
