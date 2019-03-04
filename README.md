@@ -9,6 +9,12 @@ https://github.com/fastrgv/AdaFonts/releases/download/v1.0.0/adaFontDemo.7z
 
 # AdaFonts
 
+**ver 1.0.1 -- 4mar19**
+
+* Added glBlendFunc variations example, including High Contrast mode;
+* Removed unused code;
+
+
 **ver 1.0 -- 27feb19**
 
 ## Description
@@ -39,22 +45,22 @@ Open a commandline terminal, and cd to the install directory.
 
 To initiate, type:
 
-.) binw32\fontbtns (Windows)
+.) binw32\fonttf.exe (Windows)
 
-.) fontbtns_osx (OSX)
+.) fonttf_osx (OSX)
 
-.) fontbtns_gnu (linux)
+.) fonttf_gnu (linux)
 
 =======================================================
 ## Build Instructions
 
 Compiling from a commandline terminal:
 
-.) "wcmp.bat fontbtns" on Windows
+.) "wcmp.bat fonttf" on Windows
 
-.) "ocmpss.sh fontbtns" on OSX
+.) "ocmpss.sh fonttf" on OSX
 
-.) "lcmp.sh fontbtns" on linux
+.) "lcmp.sh fonttf" on linux
 
 
 =======================================================================
