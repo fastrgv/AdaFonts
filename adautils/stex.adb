@@ -228,7 +228,8 @@ package body stex is
 
    procedure printex (
 		Text   : String; 
-		X, Y, Scale : float ) is
+		X, Y, Scale : float;
+		mode: integer) is
 
       use FT.Faces;
 
@@ -275,7 +276,33 @@ package body stex is
 
 
 			gluseprogram(progid);
-			gl.binding.glblendfunc(gl_src_alpha, gl_one_minus_src_alpha);
+
+
+	if mode=0 then --white
+	gl.binding.glblendfunc(gl_src_alpha, gl_one_minus_src_alpha); --default
+
+	elsif mode=1 then --white
+	gl.binding.glblendfunc(gl_one, gl_one_minus_src_alpha); --white
+
+	elsif mode=2 then --black
+	gl.binding.glblendfunc(gl_zero, gl_one_minus_src_alpha); --black
+
+	elsif mode=3 then --contrast lettering
+	gl.binding.glblendfunc(gl_one_minus_dst_color, gl_one_minus_src_alpha);
+
+	elsif mode=4 then --same as 2
+	gl.binding.glblendfunc(gl_constant_color, gl_one_minus_src_alpha);--?
+
+	--NOT as expected...white lettering outlined with black
+	elsif mode=5 then
+	gl.binding.glblendfunc(gl_src_alpha, gl_one_minus_dst_color);
+
+	elsif mode=6 then --similar to 3
+	glext.binding.glblendfuncseparate(
+		gl_one_minus_dst_color, gl_one_minus_src_alpha,
+		gl_src_alpha, gl_one_minus_src_alpha
+		);
+	end if;
 
 
          charTexID :=  Char_Data.Texture;
@@ -323,14 +350,16 @@ package body stex is
 	-- here, (X,Y) represent fractions of window size in (0,1)
    procedure print2d (
 		Text   : String; 
-		X, Y, Scale : float) is
+		X, Y, Scale : float;
+		mode: integer:=0
+		) is
 		diam: constant float := 0.5*float(WindowWidth+WindowHeight)/500.0;
 	begin --print2d
 		printex(
 			Text,
 			X*float(WindowWidth),
 			Y*float(WindowHeight),
-			diam*Scale);
+			diam*Scale,mode);
 	end print2d;
 
 
@@ -366,7 +395,7 @@ package body stex is
 			Text,
 			fwid*xcen,
 			fhit*ycen,
-			Scale);
+			Scale,0);
 
 	end print3d;
 

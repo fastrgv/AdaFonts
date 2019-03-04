@@ -12,7 +12,8 @@ package stex is
 
    procedure print2d (
       Text   : String; 
-		X, Y, Scale : float );
+		X, Y, Scale : float;
+		mode: integer := 0);
 
    procedure print3d (
       Text   : String; 
