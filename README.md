@@ -1,3 +1,6 @@
+![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/hcFont.png)
+This is an example of High Contrast Blend Mode.
+
 ![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/icon.png)
 
 
