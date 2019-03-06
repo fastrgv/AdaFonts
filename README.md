@@ -3,6 +3,7 @@ Above is an example of High Contrast Blend Mode Lettering.
 
 
 ![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/icon.png)
+Above is a font/button demo.
 
 
 Here is the link to the latest 7zip file containing all source:
