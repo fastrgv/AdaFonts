@@ -6,9 +6,9 @@ Above is an example of High Contrast Blend Mode Lettering.
 
 Above is a font/button demo.
 
+---------------------------------------------------------------------
 
 Here is the link to the latest 7zip file containing all source:
-
 https://github.com/fastrgv/AdaFonts/releases/download/v1.0.1/adaFontDemo.7z
 
 
