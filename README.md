@@ -26,7 +26,7 @@ https://github.com/fastrgv/AdaFonts/releases/download/v1.0.1/adaFontDemo.7z
 
 ## Description
 
-Ada Fonts is a minimalistic example of using truetype 
+Ada Fonts is a minimalistic example of using freetype 
 fonts in OpenGL Ada applications using Felix Krause's 
 FreeTypeAda package 
 
