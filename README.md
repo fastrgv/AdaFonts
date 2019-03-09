@@ -8,7 +8,7 @@ Above is a font/button demo.
 
 ---------------------------------------------------------------------
 
-Here is the link to the latest 7zip file containing all source:
+Here is the link to the latest 7zip file containing all source, libraries, data, scripts, runtime files:
 
 https://github.com/fastrgv/AdaFonts/releases/download/v1.0.1/adaFontDemo.7z
 
