@@ -1,0 +1,7 @@
+AdaFontsTTF...
+
+serves as a fully self contained example for Ada programmers
+to learn and use freetype font handling.  The sources visible in
+the GitHub repository reference other codes and resources that
+only come in the downloadable 7-zipped release package.
+
