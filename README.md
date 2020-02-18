@@ -1,20 +1,10 @@
-![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/hcFont.png)
-Above is an example of High Contrast Blend Mode Lettering.
-
-
-![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/icon.png)
-
-Above is a font/button demo.
-
----------------------------------------------------------------------
-
-Here is the link to the latest 7zip file containing all source, libraries, data, scripts, runtime files:
-
-https://github.com/fastrgv/AdaFonts/releases/download/v1.0.1/adaFontDemo.7z
-
-
-
 # AdaFonts
+
+
+**ver 1.0.2 -- 18feb20**
+
+* Repaired linux library to greatly enhance linux portability;
+
 
 **ver 1.0.1 -- 4mar19**
 
@@ -26,7 +16,7 @@ https://github.com/fastrgv/AdaFonts/releases/download/v1.0.1/adaFontDemo.7z
 
 ## Description
 
-Ada Fonts is a minimal example of using freetype 
+Ada Fonts is a minimalistic example of using truetype 
 fonts in OpenGL Ada applications using Felix Krause's 
 FreeTypeAda package 
 
@@ -42,7 +32,7 @@ on any computer running Windows, OS-X, or GNU/Linux.
 The only 3rd-party tool required is an Ada compiler.
 
 ## Setup & Running:
-The application's root directory [~/adafontsTTF/] contains files 
+The application's root directory [~/adafonts/] contains files 
 for deployment on 3 platforms:  1)OS-X, 2)linux, 3)Windows, 
 in addition to all the source code.
 

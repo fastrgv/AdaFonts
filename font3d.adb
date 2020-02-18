@@ -1,4 +1,3 @@
-
 --
 -- Copyright (C) 2019  <fastrgv@gmail.com>
 --
@@ -61,7 +60,7 @@ with text_io;
 
 
 
-procedure fontbtns is
+procedure font3d is
 
 
 	use Ada.Strings.Unbounded;
@@ -104,8 +103,6 @@ procedure fontbtns is
 
 ------------------ begin los calculator specific data
 
-	b1push, b2push, b3push : boolean := false;
-
 
 
 
@@ -138,26 +135,8 @@ procedure fontbtns is
 	matrixid, uniftex : glint;
 
 	picttexshadid,
-	btnup_texid, btndn_texid, 
 	floor_texid : gluint := 0;
 
-	-- virtual screen:  (x,z) in [-1,+1]
-	-- Button locations
-	-- (x,?,z) have origin @ center...
-	-- increasing rightward, downward
-
-	bdx: constant float := 0.05; --0.1;
-	bdz: constant float := 0.05;
-
-
-	b1x: constant float := -0.92;
-	b1z: constant float := -0.68;
-
-	b2x: constant float := -0.92;
-	b2z: constant float := -0.48;
-
-	b3x: constant float := -0.92;
-	b3z: constant float := -0.18;
 
 
 	opict: pictobj.pictangle;
@@ -329,7 +308,7 @@ end InitSDL;
 
 
 
-
+xeye, yeye, zeye: float;
 
 MVP, ModelMatrix, ViewMatrix, ProjectionMatrix
 	 : mat44 := identity;
@@ -338,21 +317,21 @@ MVP, ModelMatrix, ViewMatrix, ProjectionMatrix
 procedure updateMVP is -- only call once unless change in aspect ratio
 
 	xlook, ylook, zlook, xlk,ylk,zlk, xrt,yrt,zrt, xup,yup,zup : float;
-	xme,yme,zme : float;
+	--xme,yme,zme : float;
 
 	fovdeg : constant float := 45.0;
 	fovrad : constant float := fovdeg*deg2rad;
 
 
 	-- distance from eye so FOV encompasses proper field:
-	eyeradius : constant float := 1.0 / fmath.tan(fovrad/2.0);
+	eyeradius : constant float := 7.0; --1.0 / fmath.tan(fovrad/2.0); --2.4
 
 	horiAng : constant float := onepi; --0.0;
 	near : constant float := 0.1;
 	far  : constant float := 100.0;
 
 	focus : constant vec3 := (0.0, -1.0, 0.0);
-	eyepos: constant vec3 := (0.0, eyeradius-1.0 , 0.0);
+	eyepos: constant vec3 := (0.0, eyeradius-1.0 , 0.0); --(0,1.4,0)
 	look  : constant vec3 := 
 		( focus(1)-eyepos(1), focus(2)-eyepos(2), focus(3)-eyepos(3) );
 	vertAng : constant float := fmath.arctan( look(2), look(3) );
@@ -361,18 +340,18 @@ begin
 
 	ModelMatrix:=identity;
 
-	xme:=eyepos(1);
-	yme:=eyepos(2);
-	zme:=eyepos(3);
+	xeye:=eyepos(1);
+	yeye:=eyepos(2); -- +1.4
+	zeye:=eyepos(3);
 
 	-- look direction:
 	xlook := fmath.cos(vertang)*fmath.sin(horiang);
 	ylook := fmath.sin(vertang);
 	zlook := fmath.cos(vertang)*fmath.cos(horiang);
 
-	xlk := xme+xlook;
-	ylk := yme+ylook;
-	zlk := zme+zlook;
+	xlk := xeye+xlook;
+	ylk := yeye+ylook;
+	zlk := zeye+zlook;
 
 	-- Right unit-Direction
 	xrt:= fmath.sin(horiang-halfpi);
@@ -384,7 +363,7 @@ begin
 
 	perspective(ProjectionMatrix, fovdeg, 1.0,  near, far);
 
-	lookat(ViewMatrix, xme,yme,zme, xlk,ylk,zlk, xup,yup,zup );
+	lookat(ViewMatrix, xeye,yeye,zeye, xlk,ylk,zlk, xup,yup,zup );
 
 	MVP:=ModelMatrix;
 	matXmat(MVP,ViewMatrix);
@@ -405,8 +384,6 @@ begin
 	glext.binding.glDeleteBuffers(1, elembuff'address);
 
 	gldeletetextures(1, floor_texid'address);
-	gldeletetextures(1, btnup_texid'address);
-	gldeletetextures(1, btndn_texid'address);
 
 	glext.binding.glDeleteProgram( picttexshadid );
 
@@ -432,10 +409,7 @@ begin
 	matrixid := glgetuniformlocation(picttexshadid, pmvp);
 	uniftex  := glgetuniformlocation(picttexshadid, pmyts);
 
-	--floor_texid:= loadPng(mirror,"data/white.png");
-	floor_texid:= loadPng(mirror,"data/politicalWorldB.png");
-	btnup_texid:= loadPng(mirror,"data/btnDn.png");
-	btndn_texid:= loadPng(mirror,"data/btnUp.png");
+	floor_texid:= loadPng(mirror,"data/white.png");
 
 
 end setup_textures;
@@ -452,7 +426,6 @@ procedure first_prep is -- main program setup
       FileId : text_io.File_Type;
 		ret : glint;
 		current: aliased SDL_DisplayMode;
-
 begin
 
 ------- begin SDL prep ---------------------------------------------------
@@ -478,11 +451,8 @@ begin
 	Whit:=700;
 
 
-	InitSDL(Wwid, Whit, contextFlags, "fontbtns    <h>=help  <esc>=quit");
+	InitSDL(Wwid, Whit, contextFlags, "Font3d    <h>=help  <esc>=quit");
 
-
-	-- prepare font -------------
-	--stex.InitFont ( "data/Canterbury.ttf" );
 	stex.InitFont ( "data/AnonymousPro-Regular.ttf" );
 	stex.setColor( (0.0, 0.0, 0.0, 1.0) ); --black
 	stex.setTextWindowSize(Wwid,Whit);
@@ -529,51 +499,41 @@ end first_prep;
 procedure Draw is
 
 	dh: constant float := 0.077; --horizontal offset btn
-	szhelp: constant float := 0.4;
-	szbtn: constant float := 0.2;
+	szhelp: constant integer := 20;
+	szbtn: constant integer := 8;
 
 
-	l1x: constant float :=0.5*(b1x+1.0);
-	l1z: constant float :=1.0-0.5*(b1z+1.0)+0.05;
+	rot6 : float := onepi/6.0;
+	rot3 : float := onepi/3.0;
+	rot4 : float := onepi/4.0;
+	rot : float;
 
-	l3x: constant float :=0.5*(b3x+1.0);
-	l3z: constant float :=1.0-0.5*(b3z+1.0)+0.05;
+	numvp, nummx2y,nummy2x : mat44;
+	v4,vcc: vec4;
 
-
-
-	procedure putBtn( 
-		x,z : float; 
-		push: boolean; 
-		wide: boolean := false ) is
-		dx: float:= bdx;
-	begin
-		if wide then dx:=2.0*bdx; end if;
-		pictobj.setrect(opict, 
-			   x, -1.0,      z,
-			  dx,  0.0001, bdz );
-		if push then
-			glBindTexture(GL_TEXTURE_2D, btndn_texid);
-		else
-			glBindTexture(GL_TEXTURE_2D, btnup_texid);
-		end if;
-		pictobj.draw(opict, vertbuff, uvbuff, elembuff);
-	end putBtn;
-
-
-
-	hpos: constant float := 0.15;
-	vpos: float := 0.9;
-	procedure incline(s: string;  sz: float; r,g,b: float := 0.0) is
-		dv: constant float := sz/8.0; --reasonable vertical spacing
-	begin
-		stex.setColor( (r,g,b, 1.0) );
-		stex.print2d(s, hpos, vpos, sz);
-		vpos:=vpos-dv;
-	end incline;
-
-
+	veye : constant vec4 := (xeye,yeye,zeye,1.0);
 
 begin
+
+	rot:=rot6;
+	--rotate by rot4 about Z:
+	nummx2y:=(
+		( cos(rot),-sin(rot), 0.0, 0.0 ),
+		( sin(rot), cos(rot), 0.0, 0.0 ),
+		( 0.0, 0.0, 1.0, 0.0 ),
+		( 0.0, 0.0, 0.0, 1.0 ) );
+	
+	nummy2x:=(
+		( cos(rot), sin(rot), 0.0, 0.0 ),
+		(-sin(rot), cos(rot), 0.0, 0.0 ),
+		( 0.0, 0.0, 1.0, 0.0 ),
+		( 0.0, 0.0, 0.0, 1.0 ) );
+	
+	nuMVP:=nummy2x;
+	matXmat(nuMVP,ViewMatrix);
+	matXmat(nuMVP,ProjectionMatrix);
+
+
 
 
 	glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
@@ -585,56 +545,78 @@ begin
 
 	pictobj.setrect(opict, 
 		0.0, -1.0,    0.0,
-		1.0,  0.0001, 1.0 );
+		3.0,  0.0001, 3.0 );
 	glBindTexture(GL_TEXTURE_2D, floor_texid);
 	pictobj.draw(opict, vertbuff, uvbuff, elembuff);
 
 	if help  then -- display only help messages:
 
-		incline("fontbtns Help",szhelp); 
-		incline(" <esc> => quit",szhelp); 
-		incline("  <h>  => toggles this screen",szhelp);
-		incline("font: AnonymousPro-Regular.ttf",szhelp);
-		incline("abcdefg",szhelp);
-		incline("ABCDEFG",szhelp);
-		incline("abcdefg",szhelp);
+		stex.print2d("help",0.1,0.5,0.5);
 
 
 	else -- display normal table dialog
 
-		-- (x,?,z) have origin @ center...
-		-- increasing rightward, downward
 
-		putBtn(b1x,b1z,b1push);
-		putBtn(b2x,b2z,b2push);
-		putBtn(b3x,b3z,b3push);
+stex.setColor( (0.0, 0.0, 0.0, 1.0) ); --black
 
-------------------- text output ------------------------------------
--- all text comes after other drawings -----------------------------
---------------------------------------------------------------------
+--put("Yeye="&float'image(yeye)&" "); --1.4142
 
-		--btn labels AFTER all btns
-		stex.print2d("radio", l1x, l1z, szbtn);
-		stex.print2d("toggle", l3x, l3z, szbtn);
+		v4 := (-2.0,  -1.0, 0.0, 0.8); --against floor @ y=-1.0
+		matXvec(mvp,v4,vcc); --no twist
+		stex.print3d("abcdefghijklmnopqrstuvwxyz",vcc(1),vcc(2),vcc(3),vcc(4),1.0);
 
-		--       text      size   r, g, b
-		incline("size=0.2", 0.2);
-		incline("size=0.4", 0.4, 1.0,0.0,0.0);
-		incline("size=0.6", 0.6, 0.0,1.0,0.0);
-		incline("size=0.8", 0.8, 0.0,0.0,1.0);
-		incline("size=1.0", 1.0);
+-----------------------------------------------------------
 
-		if b1push then
-			incline("radio btn #1 selected",0.3);
-		elsif b2push then
-			incline("radio btn #2 selected",0.3);
-		end if;
+-- these are translated north (z -= 1.5)
 
-		if b3push then
-			incline("btn #3 down",0.3);
-		else
-			incline("btn #3 up",0.3);
-		end if;
+			v4 := (+1.0, -0.0, -1.5, 1.0);
+			matXvec(mvp, v4, vcc);
+			stex.print3d("+Xrt", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+
+			v4 := (-0.0, +1.0, -1.5, 1.0);
+			matXvec(mvp, v4, vcc);
+			stex.print3d("+Yout", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+
+			v4 := (-0.0, -0.0, -0.5, 1.0);
+			matXvec(mvp, v4, vcc);
+			stex.print3d("+Zdn", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+
+			v4 := (-0.0, -0.0, -1.5, 1.0);
+			matXvec(mvp, v4, vcc);
+			stex.print3d("O", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+stex.print2d("no twist:",0.02,0.7,0.5);
+-----------------------------------------------------------
+
+stex.setColor( (1.0, 0.0, 0.0, 1.0) ); --red
+
+-- these are translated south (z += 1.0)
+
+			v4 := (+1.0, -0.0, +1.0, 1.0);
+			matXvec(numvp, v4, vcc);
+			stex.print3d("+Xrt", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+
+			v4 := (-0.0, +1.0, +1.0, 1.0);
+			matXvec(numvp, v4, vcc);
+			stex.print3d("+Yout", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+
+			v4 := (-0.0, -0.0, +2.0, 1.0);
+			matXvec(numvp, v4, vcc);
+			stex.print3d("+Zdn", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+
+			v4 := (-0.0, -0.0, +1.0, 1.0);
+			matXvec(numvp, v4, vcc);
+			stex.print3d("O", vcc(1), vcc(2), vcc(3), vcc(4), 1.0 );
+
+stex.print2d("30deg twist",0.02,0.2,0.5);
+stex.print2d("about Zaxis:",0.02,0.15,0.5);
+---------------------------------------------------------------------
 
 
 	end if;
@@ -701,78 +683,13 @@ end;
 
 
 
-state,ileft,iright: integer;
-mousex, mousey : aliased interfaces.c.int;
-mousestate : Uint32;
-
-prevTime : float := 0.0;
-
-procedure handle_mouse_click( nowTime, Wwid, Whit : float ) is
-
-	fmx : float := float(mousex)/Wwid;
-	fmy : float := float(mousey)/Whit;
-
-	ox : constant float := 0.07; --0.05;
-	oz : constant float := -0.01;
-	Ok,drc,
-	b1,b2,b3,b4,b5,b6,c7: boolean := false;
-
-begin
-
---put_line("entering mouse_click");
-
-	fmx := -1.0 + 2.0*fmx;
-	fmy := -1.0 + 2.0*fmy;
 
 
-	if( (nowTime-prevTime) > 0.5 ) then
-
-		prevTime := nowTime;
-
-		b1 := (abs(fmx-b1x)<bdx) and (abs(fmy-b1z)<bdz);
-		b2 := (abs(fmx-b2x)<bdx) and (abs(fmy-b2z)<bdz);
-
-		b3 := (abs(fmx-b3x)<bdx) and (abs(fmy-b3z)<bdz);
-
-	end if;
-
-
-	--radio Btn group
-	if b1 then
-		b1push:=true;
-		b2push:=false;
-	elsif b2 then
-		b2push:=true;
-		b1push:=false;
-	end if;
-
-	--toggle Btn
-	if b3 then
-		b3push:=not b3push;
-	end if;
-
-end handle_mouse_click;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	currentTime : float;
 	test_event: aliased SDL_Event;
 
 
 
-begin -- fontbtns ===================================================
+begin -- font3d ===================================================
 
 	first_prep; -- init graphics/sound, defines fnum, flev
 
@@ -803,23 +720,6 @@ begin -- fontbtns ===================================================
 			wwid:=nwid; whit:=nhit;
 			SDL_GL_GetDrawableSize( mainWindow, Fwid'access, Fhit'access );
 			glViewport(0,0,Fwid,Fhit);
-			stex.setTextWindowSize(Wwid,Whit);
-		end if;
-
-
-		currentTime := float(sdl_getticks)/1000.0;
-
-		MouseState:=SDL_GetMouseState(mousex'access,mousey'access);
-		state := integer( MouseState );
-		ileft := integer( SDL_BUTTON(1) );
-		iright:= integer( SDL_BUTTON(3) );
-
-		if    
-			bitmatch(state, ileft)   or
-			bitmatch(state, iright)   or
-			( key_map( SDL_SCANCODE_RETURN ) /= 0 )
-		then 
-			handle_mouse_click(currentTime, float(Wwid), float(Whit) );
 		end if;
 
 
@@ -835,5 +735,5 @@ begin -- fontbtns ===================================================
 	SDL_DestroyWindow(mainWindow);
 	SDL_Quit;
 
-end fontbtns;
+end font3d;
 
