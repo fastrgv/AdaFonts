@@ -20,6 +20,12 @@ https://github.com/fastrgv/AdaFonts/releases/download/v1.0.2/adaFont18feb20.7z
 
 **ver 1.0 -- 27feb19**
 
+
+![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/hcFont.png)
+
+![screenshot](https://github.com/fastrgv/AdaFonts/blob/master/icon.png)
+
+
 ## Description
 
 Ada Fonts is a minimalistic example of using truetype 
