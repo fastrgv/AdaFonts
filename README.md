@@ -1,3 +1,9 @@
+
+The following linked archive contains the latest libraries, build scripts and source:
+
+https://github.com/fastrgv/AdaFonts/releases/download/v1.0.2/adaFont18feb20.7z
+
+
 # AdaFonts
 
 
